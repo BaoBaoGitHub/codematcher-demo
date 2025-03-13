@@ -113,7 +113,7 @@ class SearchEngine:
                     body.append(data[j])
             util.save_pkl(path + 'data' + str(i) + '.pkl', body)
 
-    def fuzzy_search(self, query_parse, top_k):
+    def fuzzy_search(self, query_parse, top_k, max_words = 8):
         """
         调用elasticsearch搜索引擎去搜索top_k个查询词
 
@@ -124,6 +124,17 @@ class SearchEngine:
         query = query_parse
         query_words = list(query[0])
         query_sorts = list(query[1])
+
+        # Limit the number of query words to max_words
+        if len(query_words) > max_words:
+            query_words_tmp = []
+            query_sorts = query_sorts[:max_words]
+            query_sorts_set = set(query_sorts)
+            # 对于query_words中的每一个单词，如果下标在query_sorts_set中，则添加到一个新的列表中
+            for index,word in enumerate(query_words):
+                if index in query_sorts_set:
+                    query_words_tmp.append(word)
+            query_words = query_words_tmp
 
         # .表示匹配除换行符\n之外的任何单字符，*表示零次或多次。
         cmd = '.*' + '.*'.join(query_words) + '.*'

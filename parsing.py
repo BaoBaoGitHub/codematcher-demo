@@ -66,7 +66,7 @@ def query_parse(query, path_parsed_vocab, path_method_vocab):
                 if idx_max_freq > -1:
                     tvalue = syns[idx_max_freq]
                     para = 1
-                    impact = vword[tvalue]
+                    impact = vword.get(stem, 0)
             if ttype in type_nn and stem in vjdk:
                 para = 2
                 impact = vjdk[stem]
@@ -82,7 +82,7 @@ def     parse(query):
     这个函数执行内容为论文中的第二阶段中的步骤1：查询理解
 
     :param query:搜索内容
-    :return: 一个列表，列表中的第一个元素为处理后的查询词列表，第二个元素为单词列表的importance
+    :return: 一个列表，列表中的第一个元素为处理后的查询词列表，第二个元素为重要性排序后的下标列表（不是文章中的importance的概念！）
     """
     items = query_parse(query,
                         path_parsed_vocab='data/parsed_vocab_jdk_item.pkl',
